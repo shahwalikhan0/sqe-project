@@ -42,7 +42,7 @@ public class AdminController {
 	public String returnIndex() {
 		adminlogcheck =0;
 		usernameforclass = "";
-		return "userLogin";
+		return "redirect:/";
 	}
 	
 	
@@ -231,14 +231,15 @@ public class AdminController {
 	@GetMapping("profileDisplay")
 	public String profileDisplay(Model model) {
 		String displayusername,displaypassword,displayemail,displayaddress;
+		System.out.println("usernameforclass" + usernameforclass);
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommjava","root","");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommjava","root","i@intech");
 			PreparedStatement stmt = con.prepareStatement("select * from users where username = ?"+";");
 			stmt.setString(1, usernameforclass);
 			ResultSet rst = stmt.executeQuery();
-			
+
 			if(rst.next())
 			{
 			int userid = rst.getInt(1);

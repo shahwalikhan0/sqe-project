@@ -42,10 +42,10 @@
                     <a class="nav-link" th:href="@{/}" href="#">CART</a>
                 </li>
                  <li class="nav-item active">
-                    <a class="nav-link" href="profileDisplay" >Profile</a>
+                    <a class="nav-link" href="admin/profileDisplay" >Profile</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" sec:authorize="isAuthenticated()" href="logout">Logout</a>
+                    <a class="nav-link" sec:authorize="isAuthenticated()" href="admin/logout">Logout</a>
                 </li>
                
             </ul>
@@ -84,7 +84,6 @@
     <div class="container">
       <h1>Welcome to Perishable Shop</h1>
 
-
       <div class="row">
       <c:forEach var="product" items="${products}">
         <div class="col-md-3">
@@ -100,6 +99,10 @@
           </div>
         </div> </c:forEach>
       </div>
+        <%-- msg added for if no product is available--%>
+    <div class="row" th:if="${msg}">
+        <p >${msg}</p>
+    </div>
 
     </div>
   </main>
