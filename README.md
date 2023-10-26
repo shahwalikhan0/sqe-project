@@ -10,6 +10,8 @@
 - support in both eclipse & intellij ide
 - overall redesign entire code that help reusability. 
 - disclaimer: currently working on this branch so there may be some bug related to endpoint, and working on cart logic.
+- Corrected the mapping for user profile page
+- Changed execute() method in AdminController to executeQuery()
   
 ## Quickstart
 
