@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jtspringproject.JtSpringProject.models.Category;
 
+import javax.persistence.EntityNotFoundException;
+
 @Repository
 public class categoryDao {
 	@Autowired

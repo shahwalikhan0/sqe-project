@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -28,127 +29,162 @@ import com.jtspringproject.JtSpringProject.services.productService;
 import com.jtspringproject.JtSpringProject.services.cartService;
 
 
-
 @Controller
-public class UserController{
-	
-	@Autowired
-	private userService userService;
+public class UserController {
 
-	@Autowired
-	private productService productService;
+    @Autowired
+    private userService userService;
 
-	@GetMapping("/register")
-	public String registerUser()
-	{
-		return "register";
-	}
+    @Autowired
+    private productService productService;
 
-	@GetMapping("/buy")
-	public String buy()
-	{
-		return "buy";
-	}
-	
+    @GetMapping("/register")
+    public String registerUser() {
+        return "register";
+    }
 
-	@GetMapping("/")
-	public String userlogin(Model model) {
-		
-		return "userLogin";
-	}
-	@RequestMapping(value = "userloginvalidate", method = RequestMethod.POST)
-	public ModelAndView userlogin( @RequestParam("username") String username, @RequestParam("password") String pass,Model model,HttpServletResponse res) {
-		
-		System.out.println(pass);
-		User u = this.userService.checkLogin(username, pass);
-		System.out.println(u.getUsername());
-		if(u.getUsername().equals(username)) {	
-			
-			res.addCookie(new Cookie("username", u.getUsername()));
-			ModelAndView mView  = new ModelAndView("index");	
-			mView.addObject("user", u);
-			List<Product> products = this.productService.getProducts();
+    @GetMapping("/buy")
+    public String buy() {
+        return "buy";
+    }
 
-			if (products.isEmpty()) {
-				mView.addObject("msg", "No products are available");
-			} else {
-				mView.addObject("products", products);
-			}
-			return mView;
 
-		}else {
-			ModelAndView mView = new ModelAndView("userLogin");
-			mView.addObject("msg", "Please enter correct email and password");
-			return mView;
+    @GetMapping("/")
+    public String userlogin(Model model) {
+
+        return "userLogin";
+    }
+
+    @RequestMapping(value = "userloginvalidate", method = RequestMethod.POST)
+    public ModelAndView userlogin(@RequestParam("username") String username, @RequestParam("password") String pass, Model model, HttpServletResponse res) {
+
+        User u = this.userService.checkLogin(username, pass);
+
+        if ((u.getRole() != null) && u.getRole().equals("ROLE_ADMIN")) {
+            model.addAttribute("msg", "Admin can't login from here");
+            ModelAndView mView = new ModelAndView("userLogin");
+            mView.addObject("message", "Admin can't login from here");
+            return mView;
+        }
+
+        if (!(u.getUsername() == null) && u.getUsername().equals(username)) {
+
+            res.addCookie(new Cookie("username", u.getUsername()));
+            ModelAndView mView = new ModelAndView("index");
+            mView.addObject("user", u);
+            List<Product> products = this.productService.getProducts();
+
+            if (products.isEmpty()) {
+                mView.addObject("msg", "No products are available");
+            } else {
+                mView.addObject("products", products);
+            }
+            return mView;
+
+        } else {
+            model.addAttribute("msg", "Please enter correct username and password");
+            ModelAndView mView = new ModelAndView("userLogin");
+            mView.addObject("message", "Please enter correct email and password");
+            return mView;
+        }
+
+    }
+
+
+    @GetMapping("/user/products")
+    public ModelAndView getproduct() {
+
+        ModelAndView mView = new ModelAndView("uproduct");
+
+        List<Product> products = this.productService.getProducts();
+
+        if (products.isEmpty()) {
+            mView.addObject("msg", "No products are available");
+        } else {
+            mView.addObject("products", products);
+        }
+
+        return mView;
+    }
+
+    @RequestMapping(value = "newuserregister", method = RequestMethod.POST)
+    public String newUseRegister(@ModelAttribute User user, Model model, @RequestParam("confirm-password") String confirmPassword) {
+        System.out.println(user.getPassword() + confirmPassword);
+        if (containsSpecialCharacter(user.getUsername()) || containsSpecialCharacter(user.getAddress())) {
+            ModelAndView mView = new ModelAndView("register");
+            mView.addObject("message", "Can not use special characters here");
+            model.addAttribute("message", "Can not use special characters here");
+            return "/register";
+        }
+		if(user.getPassword().length() < 8) {
+			ModelAndView mView = new ModelAndView("register");
+			mView.addObject("message", "Password must be at least 8 characters long");
+			model.addAttribute("message", "Password must be at least 8 characters long");
+			return "/register";
 		}
-		
-	}
-	
-	
-	@GetMapping("/user/products")
-	public ModelAndView getproduct() {
+        if (!user.getPassword().equalsIgnoreCase(confirmPassword)) {
+            ModelAndView mView = new ModelAndView("register");
+            mView.addObject("message", "Password and Confirm Password must be same");
+            model.addAttribute("message", "Password and Confirm Password must be same");
+            return "/register";
+        }
+        List<User> users = this.userService.getUsers();
+        for (User u : users) {
+            if (u.getUsername().equals(user.getUsername()) || u.getEmail().equals(user.getEmail())) {
+                ModelAndView mView = new ModelAndView("register");
+                mView.addObject("message", "User already exist");
+                model.addAttribute("message", "Invalid info or User already exist");
+                return "/register";
+            }
+        }
+        System.out.println(user.getEmail());
+        user.setRole("ROLE_NORMAL");
+        this.userService.addUser(user);
 
-		ModelAndView mView = new ModelAndView("uproduct");
+        return "redirect:/";
+    }
 
-		List<Product> products = this.productService.getProducts();
+    private boolean containsSpecialCharacter(String s) {
+        String specialCharsRegex = "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]+";
+        Pattern pattern = Pattern.compile(specialCharsRegex);
+        return pattern.matcher(s).find();
+    }
 
-		if(products.isEmpty()) {
-			mView.addObject("msg","No products are available");
-		}else {
-			mView.addObject("products",products);
-		}
 
-		return mView;
-	}
-	@RequestMapping(value = "newuserregister", method = RequestMethod.POST)
-	public String newUseRegister(@ModelAttribute User user)
-	{
-		
-		System.out.println(user.getEmail());
-		user.setRole("ROLE_NORMAL");
-		this.userService.addUser(user);
-		
-		return "redirect:/";
-	}
-	
-	
-	
-	   //for Learning purpose of model
-		@GetMapping("/test")
-		public String Test(Model model)
-		{
-			System.out.println("test page");
-			model.addAttribute("author","jay gajera");
-			model.addAttribute("id",40);
-			
-			List<String> friends = new ArrayList<String>();
-			model.addAttribute("f",friends);
-			friends.add("xyz");
-			friends.add("abc");
-			
-			return "test";
-		}
-		
-		// for learning purpose of model and view ( how data is pass to view)
-		
-		@GetMapping("/test2")
-		public ModelAndView Test2()
-		{
-			System.out.println("test page");
-			//create modelandview object
-			ModelAndView mv=new ModelAndView();
-			mv.addObject("name","jay gajera 17");
-			mv.addObject("id",40);
-			mv.setViewName("test2");
-			
-			List<Integer> list=new ArrayList<Integer>();
-			list.add(10);
-			list.add(25);
-			mv.addObject("marks",list);
-			return mv;
-			
-			
-		}
+    //for Learning purpose of model
+    @GetMapping("/test")
+    public String Test(Model model) {
+        System.out.println("test page");
+        model.addAttribute("author", "jay gajera");
+        model.addAttribute("id", 40);
+
+        List<String> friends = new ArrayList<String>();
+        model.addAttribute("f", friends);
+        friends.add("xyz");
+        friends.add("abc");
+
+        return "test";
+    }
+
+    // for learning purpose of model and view ( how data is pass to view)
+
+    @GetMapping("/test2")
+    public ModelAndView Test2() {
+        System.out.println("test page");
+        //create modelandview object
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("name", "jay gajera 17");
+        mv.addObject("id", 40);
+        mv.setViewName("test2");
+
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(10);
+        list.add(25);
+        mv.addObject("marks", list);
+        return mv;
+
+
+    }
 
 
 //	@GetMapping("carts")
@@ -157,5 +193,5 @@ public class UserController{
 //		ModelAndView mv= new ModelAndView();
 //		List<Cart>carts = cartService.getCarts();
 //	}
-	  
+
 }

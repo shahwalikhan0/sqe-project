@@ -34,4 +34,13 @@ public class categoryService {
 	public Category getCategory(int id) {
 		return this.categoryDao.getCategory(id);
 	}
+
+	public boolean exists(String categoryName) {
+		List<Category> categories = this.categoryDao.getCategories();
+		for(Category category : categories) {
+			if(category.getName().equalsIgnoreCase(categoryName))
+				return true;
+		}
+		return false;
+	}
 }

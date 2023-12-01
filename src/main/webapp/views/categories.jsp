@@ -35,9 +35,9 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto"></ul>
 				<ul class="navbar-nav">
-					<li class="nav-item active"><a class="nav-link" href="/adminhome">Home
+					<li class="nav-item active"><a class="nav-link" href="/admin/loginvalidate">Home
 							Page</a></li>
-					<li class="nav-item active"><a class="nav-link" href="/logout">Logout</a>
+					<li class="nav-item active"><a class="nav-link" href="/admin/login">Logout</a>
 					</li>
 
 				</ul>
@@ -50,9 +50,11 @@
 
 
 		<!-- Button trigger modal -->
+
 		<button type="button" style="margin: 20px 0" class="btn btn-primary"
 			data-toggle="modal" data-target="#exampleModalCenter">Add
 			Category</button>
+		<span style="color: red; margin-left: 10vw;" th:if="${message} != null" th:text="${message}">${message}</span></br>
 
 		<!-- Modal -->
 		<div class="modal fade" id="exampleModalCenter" tabindex="-1"

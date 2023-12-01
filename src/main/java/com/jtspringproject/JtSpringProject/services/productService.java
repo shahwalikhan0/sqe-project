@@ -33,5 +33,13 @@ public class productService {
 		return this.productDao.deletProduct(id);
 	}
 
-	
+
+	public boolean exists(String name) {
+		List<Product> products = this.productDao.getProducts();
+		for(Product product : products) {
+			if(product.getName().equalsIgnoreCase(name))
+				return true;
+		}
+		return false;
+	}
 }

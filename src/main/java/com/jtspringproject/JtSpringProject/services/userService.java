@@ -25,6 +25,4 @@ public class userService {
 	public User checkLogin(String username,String password) {
 		return this.userDao.getUser(username, password);
 	}
-
-	
 }

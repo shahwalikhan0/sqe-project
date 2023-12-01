@@ -45,7 +45,7 @@
                     <a class="nav-link" href="profileDisplay" >Profile</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" sec:authorize="isAuthenticated()" href="logout">Logout</a>
+                    <a class="nav-link" sec:authorize="isAuthenticated()" href="/">Logout</a>
                 </li>
                
             </ul>
