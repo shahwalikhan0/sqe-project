@@ -29,7 +29,7 @@
                     <label for="password">Password :</label>
                     <input type="password" class="form-control form-control-lg border border-danger	" placeholder="Admin Password" required name="password" id="password">
                 </div><br>
-
+                <span ><a class="linkControl" href="/">Login as User</a></span> <br><br>
                 <input type="submit" value="Login" class="btn btn-primary btn-block">
                 <br><h3 style="color:red;">${message }</h3>
                 <br>

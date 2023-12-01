@@ -36,9 +36,9 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto"></ul>
 				<ul class="navbar-nav">
-					<li class="nav-item active"><a class="nav-link" href="/adminhome">Home
+					<li class="nav-item active"><a class="nav-link" href="/admin/loginvalidate">Home
 							Page</a></li>
-					<li class="nav-item active"><a class="nav-link" href="/logout">Logout</a>
+					<li class="nav-item active"><a class="nav-link" href="/admin/login">Logout</a>
 					</li>
 
 				</ul>
@@ -49,7 +49,9 @@
 	<div class="container-fluid">
 
 		<a style="margin: 20px 0" class="btn btn-primary"
-			href="/admin/products/add">Add Product</a><br>
+			href="/admin/products/add">Add Product</a>
+		<span style="color: red; margin-left: 10vw;" th:if="${message} != null" th:text="${message}">${message}</span></br>
+		<br>
 		<table class="table">
 
 			<tr>

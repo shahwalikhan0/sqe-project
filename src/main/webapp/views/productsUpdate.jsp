@@ -36,9 +36,9 @@
 				<ul class="navbar-nav mr-auto"></ul>
 				<ul class="navbar-nav">
 					<li class="nav-item active"><a class="nav-link"
-						href="/dashboard" >Home Page</a></li>
+						href="/admin/loginvalidate" >Home Page</a></li>
 					<li class="nav-item active"><a class="nav-link"
-						href="/logout" >Logout</a></li>
+						href="/admin/login" >Logout</a></li>
 				</ul>
 
 			</div>

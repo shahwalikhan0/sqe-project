@@ -23,6 +23,7 @@ import com.mysql.cj.protocol.Resultset;
 
 import net.bytebuddy.asm.Advice.This;
 import net.bytebuddy.asm.Advice.OffsetMapping.ForOrigin.Renderer.ForReturnTypeName;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
@@ -74,14 +75,14 @@ public class AdminController {
 	@GetMapping("/loginvalidate")
 	public String adminlog(Model model) {
 		
-		return "adminlogin";
+		return "adminHome";
 	}
 	@RequestMapping(value = "loginvalidate", method = RequestMethod.POST)
 	public ModelAndView adminlogin( @RequestParam("username") String username, @RequestParam("password") String pass) {
 		
 		User user=this.userService.checkLogin(username, pass);
 		
-		if(user.getRole().equals("ROLE_ADMIN")) {
+		if((user.getRole() != null) && user.getRole().equals("ROLE_ADMIN")) {
 			ModelAndView mv = new ModelAndView("adminHome");
 			adminlogcheck=1;
 			mv.addObject("admin", user);
@@ -89,7 +90,7 @@ public class AdminController {
 		}
 		else {
 			ModelAndView mv = new ModelAndView("adminlogin");
-			mv.addObject("msg", "Please enter correct username and password");
+			mv.addObject("message", "Please enter correct username and password");
 			return mv;
 		}
 	}
@@ -106,24 +107,28 @@ public class AdminController {
 			return mView;
 		}
 	}
-	@RequestMapping(value = "categories",method = RequestMethod.POST)
-	public String addCategory(@RequestParam("categoryname") String category_name)
-	{
-		System.out.println(category_name);
-		
-		Category category =  this.categoryService.addCategory(category_name);
-		if(category.getName().equals(category_name)) {
-			return "redirect:categories";
-		}else {
-			return "redirect:categories";
+	@RequestMapping(value = "categories", method = RequestMethod.POST)
+	public String addCategory(@RequestParam("categoryname") String category_name, RedirectAttributes redirectAttributes) {
+
+		if (this.categoryService.exists(category_name)) {
+			redirectAttributes.addFlashAttribute("message", "Category already exists");
+		} else {
+			Category category = this.categoryService.addCategory(category_name);
+			if (category.getName().equals(category_name)) {
+				redirectAttributes.addFlashAttribute("message", "Category added successfully");
+			} else {
+				redirectAttributes.addFlashAttribute("message", "Error adding category");
+			}
 		}
+		return "redirect:categories";
 	}
-	
+
+
 	@GetMapping("categories/delete")
 	public ModelAndView removeCategoryDb(@RequestParam("id") int id)
 	{	
 			this.categoryService.deleteCategory(id);
-			ModelAndView mView = new ModelAndView("forward:/categories");
+			ModelAndView mView = new ModelAndView("redirect:/admin/categories");
 			return mView;
 	}
 	
@@ -165,7 +170,7 @@ public class AdminController {
 	}
 
 	@RequestMapping(value = "products/add",method=RequestMethod.POST)
-	public String addProduct(@RequestParam("name") String name,@RequestParam("categoryid") int categoryId ,@RequestParam("price") int price,@RequestParam("weight") int weight, @RequestParam("quantity")int quantity,@RequestParam("description") String description,@RequestParam("productImage") String productImage) {
+	public String addProduct(@RequestParam("name") String name,@RequestParam("categoryid") int categoryId ,@RequestParam("price") int price,@RequestParam("weight") int weight, @RequestParam("quantity")int quantity,@RequestParam("description") String description,@RequestParam("productImage") String productImage, RedirectAttributes redirectAttributes) {
 		System.out.println(categoryId);
 		Category category = this.categoryService.getCategory(categoryId);
 		Product product = new Product();
@@ -177,6 +182,11 @@ public class AdminController {
 		product.setImage(productImage);
 		product.setWeight(weight);
 		product.setQuantity(quantity);
+		if(this.productService.exists(name)) {
+			redirectAttributes.addFlashAttribute("message", "Product with the same name already exists");
+			return "redirect:/admin/products";
+		}
+
 		this.productService.addProduct(product);
 		return "redirect:/admin/products";
 	}
@@ -197,10 +207,21 @@ public class AdminController {
 	public String updateProduct(@PathVariable("id") int id ,@RequestParam("name") String name,@RequestParam("categoryid") int categoryId ,@RequestParam("price") int price,@RequestParam("weight") int weight, @RequestParam("quantity")int quantity,@RequestParam("description") String description,@RequestParam("productImage") String productImage)
 	{
 
-//		this.productService.updateProduct();
+		Category category = this.categoryService.getCategory(categoryId);
+		Product product = new Product();
+		product.setId(id);
+		product.setName(name);
+		product.setCategory(category);
+		product.setDescription(description);
+		product.setPrice(price);
+		product.setImage(productImage);
+		product.setWeight(weight);
+		product.setQuantity(quantity);
+
+		this.productService.updateProduct(id, product);
 		return "redirect:/admin/products";
 	}
-	
+
 	@GetMapping("products/delete")
 	public String removeProduct(@RequestParam("id") int id)
 	{
@@ -234,7 +255,7 @@ public class AdminController {
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommjava","root","");
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommjava","root","i@intech");
 			PreparedStatement stmt = con.prepareStatement("select * from users where username = ?"+";");
 			stmt.setString(1, usernameforclass);
 			ResultSet rst = stmt.executeQuery();

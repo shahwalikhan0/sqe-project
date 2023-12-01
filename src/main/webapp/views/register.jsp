@@ -36,12 +36,17 @@
                        id="password">
             </div>
             <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" class="form-control form-control-lg" required placeholder="Confirm Password*" required name="confirm-password"
+                       id="confirm-password">
+            </div>
+            <div class="form-group">
                 <label for="Address">Address</label>
-                <textarea class="form-control form-control-lg" rows="3" placeholder="Enter Your Address" name="address"></textarea>
+                <textarea class="form-control form-control-lg" rows="3" placeholder="Enter Your Address" name="address" id="address"></textarea>
             </div>
 <span style="margin-top: 10px">Already have an account <a class="linkControl" href="/">Login here</a></span> <br><br>
             <input type="submit" value="Register" class="btn btn-primary btn-block"><br>
-            
+            <br><h3 style="color:red;">${message}</h3>
         </form>
     </div>
 </div>
