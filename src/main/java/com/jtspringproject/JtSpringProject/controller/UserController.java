@@ -145,7 +145,7 @@ public class UserController {
     }
 
     private boolean containsSpecialCharacter(String s) {
-        String specialCharsRegex = "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]+";
+        String specialCharsRegex = "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|<>\\/?]+";
         Pattern pattern = Pattern.compile(specialCharsRegex);
         return pattern.matcher(s).find();
     }
