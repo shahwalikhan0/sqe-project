@@ -100,5 +100,3 @@ INSERT INTO PRODUCT (description, image, name, price, quantity, weight, category
 
 -- create indexes
 -- Note: Index creation syntax may vary in SQL Server; the ones provided here are simple examples
-CREATE INDEX IX_Product_Category ON PRODUCT (category_id);
-CREATE INDEX IX_Product_Customer ON PRODUCT (customer_id);
