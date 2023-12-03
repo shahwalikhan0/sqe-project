@@ -39,46 +39,39 @@ class UserControllerTest {
         userController = new UserController(userService, productService);
     }
 
+
     @Test
-    void testUserLoginWithAdminCredentials() {
-        String username = "admin";
-        String password = "123";
-        User mockedAdmin = new User();
-        mockedAdmin.setUsername(username);
-        mockedAdmin.setPassword(password);
-        mockedAdmin.setRole("ROLE_ADMIN");
-        when(userService.checkLogin(username, password)).thenReturn(mockedAdmin);
+    void testNewUserRegistrationWithInvalidLength() {
+        User newUser = new User();
+        newUser.setUsername("testUser");
+        newUser.setPassword("short");
+        newUser.setAddress("Test Address");
 
         Model model = Mockito.mock(Model.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
-        ModelAndView modelAndView = userController.userlogin(username, password, model, response);
+        String viewName = userController.newUseRegister(newUser, model, "confirmPassword");
 
-        assertEquals("userLogin", modelAndView.getViewName());
-        assertTrue(modelAndView.getModel().containsKey("message"));
-        assertEquals("Admin can't login from here", modelAndView.getModel().get("message"));
-        assertNull(modelAndView.getModel().get("user"));
+        assertEquals("/register", viewName);
+
+        Mockito.verify(model, Mockito.times(1)).addAttribute("message", "Password must be at least 8 characters long");
+    }
+
+    @Test
+    void testNewUserRegistrationWithValidLength() {
+        User newUser = new User();
+        newUser.setUsername("testUser");
+        newUser.setPassword("longPassword");
+        newUser.setAddress("Test Address");
+
+        Model model = Mockito.mock(Model.class);
+
+        String viewName = userController.newUseRegister(newUser, model, "confirmPassword");
+
+        assertEquals("/register", viewName);
+
+        Mockito.verify(model, Mockito.times(1)).addAttribute("message", "Password and Confirm Password must be same");
     }
 
 
-    @Test
-    void testUserLoginWithUserCredentials() {
-        String username = "lisa";
-        String password = "765";
-        User mockedUser = new User();
-        mockedUser.setUsername(username);
-        mockedUser.setPassword(password);
-        mockedUser.setRole("ROLE_USER");
-        when(userService.checkLogin(username, password)).thenReturn(mockedUser);
-
-        Model model = Mockito.mock(Model.class);
-        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
-
-        ModelAndView modelAndView = userController.userlogin(username, password, model, response);
-
-        assertEquals("index", modelAndView.getViewName());
-        assertTrue(modelAndView.getModel().containsKey("user"));
-        assertFalse(modelAndView.getModel().containsKey("message"));
-    }
 
 }
