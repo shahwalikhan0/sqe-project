@@ -39,6 +39,12 @@ public class AdminController {
 	
 	int adminlogcheck = 0;
 	String usernameforclass = "";
+
+	public AdminController(com.jtspringproject.JtSpringProject.services.categoryService categoryService, com.jtspringproject.JtSpringProject.services.productService productService) {
+		this.categoryService = categoryService;
+		this.productService = productService;
+	}
+
 	@RequestMapping(value = {"/","/logout"})
 	public String returnIndex() {
 		adminlogcheck =0;
@@ -125,16 +131,17 @@ public class AdminController {
 
 
 	@GetMapping("categories/delete")
-	public ModelAndView removeCategoryDb(@RequestParam("id") int id)
-	{	
-			this.categoryService.deleteCategory(id);
-			ModelAndView mView = new ModelAndView("redirect:/admin/categories");
-			return mView;
+	public ModelAndView removeCategoryDb(@RequestParam("id") int id) {
+		deleteCategory(id);
+		ModelAndView mView = new ModelAndView("redirect:/admin/categories");
+		return mView;
+	}
+	public void deleteCategory(int id) {
+		this.categoryService.deleteCategory(id);
 	}
 	
 	@GetMapping("categories/update")
-	public String updateCategory(@RequestParam("categoryid") int id, @RequestParam("categoryname") String categoryname)
-	{
+	public String updateCategory(@RequestParam("categoryid") int id, @RequestParam("categoryname") String categoryname) {
 		Category category = this.categoryService.updateCategory(id, categoryname);
 		return "redirect:/admin/categories";
 	}

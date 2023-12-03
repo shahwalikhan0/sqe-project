@@ -60,4 +60,17 @@ public class userDao {
 		}
     	
     }
+
+	public Object userNameExists(String existingUsername) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from CUSTOMER where username = :username");
+		query.setParameter("username",existingUsername);
+		try {
+			User user = (User) query.getSingleResult();
+			return user;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			User user = new User();
+			return user;
+		}
+	}
 }
