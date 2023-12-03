@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.jtspringproject.JtSpringProject.services.cartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,6 +38,11 @@ public class UserController {
 
     @Autowired
     private productService productService;
+
+    public UserController(com.jtspringproject.JtSpringProject.services.userService userService, com.jtspringproject.JtSpringProject.services.productService productService) {
+        this.userService = userService;
+        this.productService = productService;
+    }
 
     @GetMapping("/register")
     public String registerUser() {
@@ -128,14 +134,11 @@ public class UserController {
             model.addAttribute("message", "Password and Confirm Password must be same");
             return "/register";
         }
-        List<User> users = this.userService.getUsers();
-        for (User u : users) {
-            if (u.getUsername().equals(user.getUsername()) || u.getEmail().equals(user.getEmail())) {
-                ModelAndView mView = new ModelAndView("register");
-                mView.addObject("message", "User already exist");
-                model.addAttribute("message", "Invalid info or User already exist");
-                return "/register";
-            }
+        if(userNameExists(user.getUsername())) {
+            ModelAndView mView = new ModelAndView("register");
+            mView.addObject("message", "Username already exists");
+            model.addAttribute("message", "Username already exists");
+            return "/register";
         }
         System.out.println(user.getEmail());
         user.setRole("ROLE_NORMAL");
@@ -143,8 +146,17 @@ public class UserController {
 
         return "redirect:/";
     }
+    boolean userNameExists(String username) {
+        List<User> users = this.userService.getUsers();
+        for(User user : users) {
+            if(user.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    private boolean containsSpecialCharacter(String s) {
+    public boolean containsSpecialCharacter(String s) {
         String specialCharsRegex = "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|<>\\/?]+";
         Pattern pattern = Pattern.compile(specialCharsRegex);
         return pattern.matcher(s).find();

@@ -25,4 +25,8 @@ public class userService {
 	public User checkLogin(String username,String password) {
 		return this.userDao.getUser(username, password);
 	}
+
+	public Object userNameExists(String existingUsername) {
+		return this.userDao.userNameExists(existingUsername);
+	}
 }
