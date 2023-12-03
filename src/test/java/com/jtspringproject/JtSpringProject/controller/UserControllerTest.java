@@ -39,7 +39,6 @@ class UserControllerTest {
         userController = new UserController(userService, productService);
     }
 
-<<<<<<< HEAD
     @Test
     void testUserLoginWithAdminCredentials() {
         String username = "admin";
@@ -81,8 +80,6 @@ class UserControllerTest {
         assertTrue(modelAndView.getModel().containsKey("user"));
         assertFalse(modelAndView.getModel().containsKey("message"));
     }
-=======
->>>>>>> 657b229664cd4ba8d5686fde8b60178211821134
 
     @Test
     void testNewUserRegistrationWithInvalidLength() {
@@ -116,7 +113,6 @@ class UserControllerTest {
         Mockito.verify(model, Mockito.times(1)).addAttribute("message", "Password and Confirm Password must be same");
     }
 
-<<<<<<< HEAD
     @Test
     void testUsernameShouldNotIncludeSpecialCharacters() {
         String invalidUsername = "user@name";
@@ -131,8 +127,5 @@ class UserControllerTest {
         boolean viewName = userController.userNameExists(username);
         assertFalse(viewName);
     }
-=======
-
->>>>>>> 657b229664cd4ba8d5686fde8b60178211821134
 
 }
