@@ -76,8 +76,8 @@
                 <version>3.8.1</version>
                 <!-- Use the latest version -->
                 <configuration>
-                    <source>17</source> <!-- Updated to Java 17 -->
-                    <target>17</target> <!-- Updated to Java 17 -->
+                    <source>1.8</source> 
+                    <target>1.8</target> 
                 </configuration>
             </plugin>
             <plugin>
