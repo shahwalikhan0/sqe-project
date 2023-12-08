@@ -27,4 +27,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Run Unit Tests
-      run: mvn -B test
+      run: |
+        mvn -B test
+        cat /home/runner/work/sqe-project/sqe-project/target/surefire-reports/*.txt || true
+
