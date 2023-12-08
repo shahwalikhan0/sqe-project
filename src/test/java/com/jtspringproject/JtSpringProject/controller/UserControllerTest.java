@@ -1,12 +1,14 @@
  package com.jtspringproject.JtSpringProject.controller;
-
+ import io.github.bonigarcia.wdm.WebDriverManager;
  import com.jtspringproject.JtSpringProject.models.User;
  import com.jtspringproject.JtSpringProject.services.productService;
  import com.jtspringproject.JtSpringProject.services.userService;
+ import org.junit.jupiter.api.BeforeAll;
  import org.junit.jupiter.api.BeforeEach;
  import org.junit.jupiter.api.Test;
  import org.mockito.InjectMocks;
  import org.mockito.Mockito;
+ import org.openqa.selenium.chrome.ChromeDriver;
  import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
  import org.springframework.boot.test.mock.mockito.MockBean;
  import org.springframework.ui.Model;
@@ -22,7 +24,6 @@
 
  @WebMvcTest(UserController.class)
  class UserControllerTest {
-
      @InjectMocks
      private UserController userController;
 
@@ -31,6 +32,20 @@
 
      @MockBean
      private productService productService;
+
+//     @BeforeAll
+//     public static void setUp() {
+//         // Use WebDriverManager to setup ChromeDriver
+//         WebDriverManager.chromedriver().setup();
+//
+//         // Initialize WebDriver
+//         ChromeDriver driver = new ChromeDriver();
+//         driver.get("http://localhost:8080/");
+//         System.out.println("Title: " + driver.getTitle());
+//
+//
+//         driver.quit();
+//     }
 
      @BeforeEach
      void setUp() {
