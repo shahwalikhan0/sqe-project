@@ -1,5 +1,4 @@
  package com.jtspringproject.JtSpringProject.controller;
- import io.github.bonigarcia.wdm.WebDriverManager;
  import com.jtspringproject.JtSpringProject.models.User;
  import com.jtspringproject.JtSpringProject.services.productService;
  import com.jtspringproject.JtSpringProject.services.userService;
