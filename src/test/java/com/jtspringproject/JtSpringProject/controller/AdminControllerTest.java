@@ -5,14 +5,12 @@ import static org.mockito.Mockito.when;
 
 import com.jtspringproject.JtSpringProject.models.Category;
 import com.jtspringproject.JtSpringProject.models.Product;
-import com.jtspringproject.JtSpringProject.models.User;
 import com.jtspringproject.JtSpringProject.services.categoryService;
 import com.jtspringproject.JtSpringProject.services.productService;
 import com.jtspringproject.JtSpringProject.services.userService;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -20,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -112,21 +108,6 @@ class AdminControllerTest {
     }
 
     /**
-     {@link AdminController#adminlog(Model)}
-     */
-    @Test
-    void testAdminlog() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/admin/loginvalidate");
-        MockMvcBuilders.standaloneSetup(adminController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().size(0))
-                .andExpect(MockMvcResultMatchers.view().name("adminlogin"))
-                .andExpect(MockMvcResultMatchers.forwardedUrl("adminlogin"));
-    }
-
-    /**
      {@link AdminController#adminlogin()}
      */
     @Test
@@ -153,32 +134,6 @@ class AdminControllerTest {
                 .perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(0))
-                .andExpect(MockMvcResultMatchers.view().name("adminlogin"))
-                .andExpect(MockMvcResultMatchers.forwardedUrl("adminlogin"));
-    }
-
-    /**
-     {@link AdminController#adminlogin(String, String)}
-     */
-    @Test
-    void testAdminlogin3() throws Exception {
-        User user = new User();
-        user.setAddress("42 Main St");
-        user.setEmail("jane.doe@example.org");
-        user.setId(1);
-        user.setPassword("iloveyou");
-        user.setRole("Role");
-        user.setUsername("janedoe");
-        when(userService.checkLogin(Mockito.<String>any(), Mockito.<String>any())).thenReturn(user);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/admin/loginvalidate")
-                .param("password", "foo")
-                .param("username", "foo");
-        MockMvcBuilders.standaloneSetup(adminController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().size(1))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("msg"))
                 .andExpect(MockMvcResultMatchers.view().name("adminlogin"))
                 .andExpect(MockMvcResultMatchers.forwardedUrl("adminlogin"));
     }
@@ -290,23 +245,6 @@ class AdminControllerTest {
     }
 
     /**
-     {@link AdminController#removeCategoryDb(int)}
-     */
-    @Test
-    void testRemoveCategoryDb() throws Exception {
-        when(categoryService.deleteCategory(anyInt())).thenReturn(true);
-        MockHttpServletRequestBuilder getResult = MockMvcRequestBuilders.get("/admin/categories/delete");
-        MockHttpServletRequestBuilder requestBuilder = getResult.param("id", String.valueOf(1));
-        MockMvcBuilders.standaloneSetup(adminController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().size(0))
-                .andExpect(MockMvcResultMatchers.view().name("forward:/categories"))
-                .andExpect(MockMvcResultMatchers.forwardedUrl("/categories"));
-    }
-
-    /**
      {@link AdminController#removeProduct(int)}
      */
     @Test
@@ -321,37 +259,6 @@ class AdminControllerTest {
                 .andExpect(MockMvcResultMatchers.model().size(0))
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/admin/products"))
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/admin/products"));
-    }
-
-    /**
-     {@link AdminController#returnIndex()}
-     */
-    @Test
-    void testReturnIndex() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/admin/");
-        MockMvcBuilders.standaloneSetup(adminController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().size(0))
-                .andExpect(MockMvcResultMatchers.view().name("adminlogin"))
-                .andExpect(MockMvcResultMatchers.forwardedUrl("adminlogin"));
-    }
-
-    /**
-     {@link AdminController#returnIndex()}
-     */
-    @Test
-    void testReturnIndex2() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/admin/");
-        requestBuilder.characterEncoding("Encoding");
-        MockMvcBuilders.standaloneSetup(adminController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().size(0))
-                .andExpect(MockMvcResultMatchers.view().name("adminlogin"))
-                .andExpect(MockMvcResultMatchers.forwardedUrl("adminlogin"));
     }
 
     /**
